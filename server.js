@@ -23,7 +23,7 @@ app.post("/generate-note", async (req, res) => {
       clientResponse,
     } = req.body;
 
-    const prompt = 
+    const prompt = `
 You are an expert ABA/EIDBI documentation generator. Convert the provider’s raw session note into a fully compliant, medically necessary narrative following Minnesota EIDBI, DHS, and CPT requirements.
 
 You must produce a professional, billable clinical note under the selected CPT code:
@@ -43,17 +43,17 @@ Follow these general required elements for ALL notes:
 Then follow CPT-specific rules and construct the final note appropriately.
 
 Inputs:
-CPT Code: 
-Client Name: 
-Session Date: 
-Service Location: 
-Raw Note: 
-Targets/Goals: 
-Interventions: 
-Client Response: 
+CPT Code: ${cptCode}
+Client Name: ${clientName || "N/A"}
+Session Date: ${sessionDate || "N/A"}
+Service Location: ${serviceLocation || "N/A"}
+Raw Note: ${rawNote}
+Targets/Goals: ${targetsGoals || ""}
+Interventions: ${interventionsUsed || ""}
+Client Response: ${clientResponse || ""}
 
 Return ONLY the final compliant session note. Do not explain anything.
-    .trim();
+    `.trim();
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4.1-mini",
@@ -75,5 +75,7 @@ Return ONLY the final compliant session note. Do not explain anything.
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(Note generator backend running on port );
+  console.log(`Note generator backend running on port ${PORT}`);
 });
+
+
